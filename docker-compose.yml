@@ -1,0 +1,34 @@
+version: '3.9'
+
+services:
+  # Service pour la base de données PostgreSQL
+  database:
+    image: mon-database
+    container_name: mon_postgres
+    ports:
+      - "5432:5432"
+    networks:
+      - app-network
+    environment:
+      POSTGRES_DB: db
+      POSTGRES_USER: usr
+      POSTGRES_PASSWORD: pwd
+
+  # Service pour l'API backend Spring Boot
+  backend:
+    image: mon-backend
+    container_name: mon-backend
+    ports:
+      - "8080:8080"
+    networks:
+      - app-network
+    depends_on:
+      - database
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://mon_postgres:5432/db
+      SPRING_DATASOURCE_USERNAME: usr
+      SPRING_DATASOURCE_PASSWORD: pwd
+
+networks:
+  app-network:
+    driver: bridge
